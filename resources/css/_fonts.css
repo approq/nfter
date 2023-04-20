@@ -1,0 +1,45 @@
+/* Lato */
+@font-face {
+    font-family: "Lato";
+    src: url("../fonts/Lato-Regular.ttf");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Lato";
+    src: url("../fonts/Lato-Italic.ttf");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Lato";
+    src: url("../fonts/Lato-Semibold.ttf");
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Lato";
+    src: url("../fonts/Lato-SemiboldItalic.ttf");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Lato";
+    src: url("../fonts/Lato-Bold.ttf");
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Lato";
+    src: url("../fonts/Lato-BoldItalic.ttf");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}

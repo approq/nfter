@@ -1,0 +1,5 @@
+{
+    "exclude": ["**/tests/**", "public/**/*", "**/*.blade.php", "resources/js/boostrap.ts"],
+    "include": ["resources/**/*.ts", "resources/**/*.d.ts", "resources/**/*.tsx"],
+    "extends": "./tsconfig.json"
+}
