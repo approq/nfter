@@ -1,155 +1,81 @@
-import { Method } from "@inertiajs/core";
-import { Link } from "@inertiajs/react";
-import { useState } from "react";
+import type { Method } from "@inertiajs/core";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import { convertAddress } from "@/Helpers/utils";
 
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 interface Properties {
-    auth: { user: App.Data.UserData };
-    header: React.ReactNode;
-    children?: React.ReactNode;
-    error?: any;
+    user: App.Data.UserData;
+    children: React.ReactNode;
 }
 
-export default function Authenticated({ auth, header, children }: Properties): JSX.Element {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-
+export default function Authenticated({ user, children }: Properties): JSX.Element {
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
+        <div className={"flex min-h-screen flex-col"}>
+            <header className={"relative flex justify-between border-b border-b-secondary-300 px-6 py-4 md:px-8"}>
+                <ApplicationLogo className={"text-2xl font-bold"} />
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink
-                                    href={route("dashboard")}
-                                    active={route().current("dashboard")}
-                                >
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                        </div>
-
-                        <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                            <div className="relative ml-3">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {auth.user.name}
-
-                                                <svg
-                                                    className="ml-2 -mr-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href={route("profile.edit")}>Profile</Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route("logout")}
-                                            method={Method.POST}
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-mr-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() => {
-                                    setShowingNavigationDropdown((previousState) => !previousState);
-                                }}
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={!showingNavigationDropdown ? "inline-flex" : "hidden"}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={showingNavigationDropdown ? "inline-flex" : "hidden"}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={(showingNavigationDropdown ? "block" : "hidden") + " sm:hidden"}>
-                    <div className="space-y-1 pt-2 pb-3">
-                        <ResponsiveNavLink
-                            href={route("dashboard")}
-                            active={route().current("dashboard")}
+                <Dropdown>
+                    <Dropdown.Trigger>
+                        <div
+                            className={`flex cursor-pointer items-center rounded-lg border-secondary-400 px-3 py-1.5
+                            text-sm font-semibold text-secondary-700 hover:flex hover:items-center
+                             hover:border-primary-400 hover:bg-primary-50 md:border-2 md:py-2.5`}
                         >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
+                            <div className={"h-5 w-5 overflow-hidden rounded-full"}>
+                                <Jazzicon
+                                    diameter={20}
+                                    seed={jsNumberForAddress(user.address)}
+                                />
+                            </div>
 
-                    <div className="border-t border-gray-200 pt-4 pb-1">
-                        <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">{auth.user.name}</div>
-                            <div className="text-sm font-medium text-gray-500">{auth.user.email}</div>
+                            <div className={"ml-2"}>{convertAddress(user.address)}</div>
+
+                            <div className={"ml-3 inline-block border-l border-l-secondary-300 pl-3.5"}>
+                                <img
+                                    src="/images/chevron.svg"
+                                    alt="chevron"
+                                    className={"w-3"}
+                                />
+                            </div>
                         </div>
+                    </Dropdown.Trigger>
 
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route("profile.edit")}>Profile</ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method={Method.POST}
-                                href={route("logout")}
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
+                    <Dropdown.Content
+                        contentClasses={"rounded-xl py-4 -mt-2 bg-white text-secondary-600 font-semibold space-y-2"}
+                    >
+                        <Dropdown.Link>
+                            <div className={"flex"}>
+                                <img
+                                    className={"mr-3 h-4 w-4"}
+                                    src="/images/external.svg"
+                                    alt="external"
+                                />
+                                View on Explorer
+                            </div>
+                        </Dropdown.Link>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">{header}</div>
-                </header>
-            )}
+                        <Dropdown.Link
+                            method={Method.POST}
+                            as={"button"}
+                            href={route("disconnect")}
+                        >
+                            <div className={"flex"}>
+                                <img
+                                    className={"mr-3 h-4 w-4"}
+                                    src="/images/exit.svg"
+                                    alt="exit"
+                                />
+                                Disconnect Wallet
+                            </div>
+                        </Dropdown.Link>
+                    </Dropdown.Content>
+                </Dropdown>
+            </header>
 
-            <main>{children}</main>
+            <div className={"flex grow flex-col py-7"}>
+                <div className={"container"}>{children}</div>
+            </div>
         </div>
     );
 }

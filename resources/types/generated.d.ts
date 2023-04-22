@@ -1,7 +1,13 @@
 declare namespace App.Data {
     export type UserData = {
-        email: string;
-        name: string;
-        email_verified_at: string | null;
+        address: string;
+    };
+
+    export type NftData = {
+        title: string;
+        thumbnail: string;
+        collection_name: string;
+        collection_image: string | null;
+        collection_website: string | null;
     };
 }

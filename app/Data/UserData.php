@@ -11,9 +11,7 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 class UserData extends Data
 {
     public function __construct(
-        public string $email,
-        public string $name,
-        public string|null $email_verified_at,
+        public string $address,
     ) {
     }
 }

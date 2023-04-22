@@ -49,6 +49,7 @@
         "react-dom": "^18.2.0",
         "react-jazzicon": "^1.0.4",
         "react-responsive": "^9.0.2",
+        "sass": "^1.62.0",
         "tailwindcss": "^3.2.1",
         "ts-loader": "^9.4.2",
         "tsc": "^2.0.4",

@@ -60,20 +60,6 @@ const useMetaMask = (): MetaMaskState => {
     const supportsMetaMask = isMetaMaskSupportedBrowser();
     const needsMetaMask = !hasMetaMask() || !supportsMetaMask;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const logout = async (): Promise<void> => {
-        // TODO: implement
-        await new Promise<void>((resolve) => {
-            router.visit(route("logout"), {
-                replace: true,
-                method: "post" as VisitOptions["method"],
-                onFinish: () => {
-                    resolve();
-                },
-            });
-        });
-    };
-
     // Initialize the Web3Provider when the page loads
     useEffect(() => {
         if (!supportsMetaMask || needsMetaMask) {
@@ -178,11 +164,7 @@ const useMetaMask = (): MetaMaskState => {
 
         const address = utils.getAddress(account);
 
-        // In case the user was connected properly, the address will be available
-        console.log("connected with:", account);
-
-        // TODO: create user by posting data
-        router.visit(route("login"), {
+        router.visit(route("connect"), {
             replace: true,
             method: "post" as VisitOptions["method"],
             data: {

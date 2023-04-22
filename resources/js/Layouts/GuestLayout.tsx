@@ -1,32 +1,29 @@
-import { Link } from "@inertiajs/react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import { useMetaMaskContext } from "@/Contexts/MetaMaskContext";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 
 interface Properties {
     children: React.ReactNode;
+    loading: boolean;
+    connect: () => void;
 }
-
-export default function Guest({ children }: Properties): JSX.Element {
-    const { connectWallet } = useMetaMaskContext();
+export default function Guest({ children, loading, connect }: Properties): JSX.Element {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
-            </div>
+        <div className={"flex min-h-screen flex-col"}>
+            <header className={"flex justify-between border-b border-b-secondary-300 px-6 py-4 md:px-8"}>
+                <ApplicationLogo className={"text-2xl font-bold"} />
 
-            <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-                {children}
-            </div>
+                <PrimaryButton
+                    type={"button"}
+                    onClick={connect}
+                    processing={loading}
+                >
+                    Connect
+                </PrimaryButton>
+            </header>
 
-            <button
-                onClick={() => {
-                    connectWallet();
-                }}
-            >
-                Connect MetaMask
-            </button>
+            <div className={"flex grow flex-col py-7"}>
+                <div className="container my-auto flex justify-center align-middle">{children}</div>
+            </div>
         </div>
     );
 }
