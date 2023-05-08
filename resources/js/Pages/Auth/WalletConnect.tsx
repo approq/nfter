@@ -4,15 +4,25 @@ import Spinner from "@/Components/Spinner";
 import { useMetaMaskContext } from "@/Contexts/MetaMaskContext";
 import GuestLayout from "@/Layouts/GuestLayout";
 
-export default function Guest(): JSX.Element {
-    const { connectWallet } = useMetaMaskContext();
+interface Properties {
+    message: string;
+}
+export default function Guest({ message }: Properties): JSX.Element {
+    const { connectWallet, allowedChainId, errorMessage } = useMetaMaskContext();
     const [loading, setLoading] = useState(false);
     const [showError, setShowError] = useState(false);
 
     const connect = (): void => {
+        if (allowedChainId()) {
+            setShowError(false);
+        } else {
+            setShowError(true);
+            return;
+        }
+
         setLoading(true);
 
-        connectWallet()
+        connectWallet(message)
             .catch(() => {
                 setShowError(true);
             })
@@ -64,7 +74,7 @@ export default function Guest(): JSX.Element {
                         </h3>
 
                         <p className={"text-sm font-semibold text-secondary-700"}>
-                            There was a problem connecting the wallet to the NFTer, try again.
+                            {errorMessage ?? "There was a problem connecting the wallet to the NFTer, try again."}
                         </p>
                     </div>
                 )}

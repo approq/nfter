@@ -8,11 +8,7 @@ const hasMetaMask = (): boolean => window.ethereum !== undefined;
 
 const getEthereum = (): Ethereum => window.ethereum as Ethereum;
 
-// Metamask supports Chrome, Firefox, Brave, Edge, and Opera, since Edge and
-// Opera are based on Chromium, we can just check for Chrome and Firefox
-// @see https://metamask.io/download/
 const isMetaMaskSupportedBrowser = (): boolean => {
-    // If the user has MetaMask installed, we can assume they are on a supported browser
     if (hasMetaMask()) {
         return true;
     }
@@ -23,10 +19,14 @@ const isMetaMaskSupportedBrowser = (): boolean => {
     return isCompatible && !isMobile;
 };
 
+const allowedNetworks: number[] = [1, 137];
+
 export interface MetaMaskState {
     account?: string;
     chainId?: number;
-    connectWallet: () => Promise<void>;
+    connectWallet: (message: string) => Promise<void>;
+    allowedChainId: () => boolean;
+    scanUrl: () => string;
     connecting: boolean;
     initialized: boolean;
     needsMetaMask: boolean;
@@ -50,7 +50,18 @@ const ErrorTypes = {
     [ErrorType.UserRejected]: "user_rejected",
 };
 
-const useMetaMask = (): MetaMaskState => {
+const useMetaMask = (): {
+    allowedChainId: () => boolean;
+    scanUrl: () => string;
+    chainId: number | undefined;
+    needsMetaMask: boolean;
+    connectWallet: (message: string) => Promise<void>;
+    errorMessage: string | undefined;
+    initialized: boolean;
+    connecting: boolean;
+    account: string | undefined;
+    supportsMetaMask: boolean
+} => {
     const [initialized, setInitialized] = useState<boolean>(false);
     const [chainId, setChainId] = useState<number>();
     const [account, setAccount] = useState<string>();
@@ -150,44 +161,68 @@ const useMetaMask = (): MetaMaskState => {
         setConnecting(false);
     }, []);
 
-    const connectWallet = useCallback(async () => {
-        setConnecting(true);
+    const connectWallet = useCallback(
+        async (message: string) => {
+            setConnecting(true);
 
-        setErrorMessage(undefined);
+            setErrorMessage(undefined);
 
-        const { account } = await requestAccount();
+            const { account } = await requestAccount();
 
-        if (account === undefined) {
-            onError(ErrorType.NoAccount);
-            return;
+            if (account === undefined) {
+                onError(ErrorType.NoAccount);
+                return;
+            }
+
+            const address = utils.getAddress(account);
+            const signature = await ethereumProvider?.getSigner().signMessage(message);
+
+            router.visit(route("connect"), {
+                replace: true,
+                method: "post" as VisitOptions["method"],
+                data: {
+                    address,
+                    signature,
+                },
+                onError: (error) => {
+                    const firstError = [error.address, error.chainId].find((value) => typeof value === "string");
+
+                    onError(ErrorType.Generic, firstError);
+                },
+                onFinish: () => {
+                    setAccount(account);
+
+                    setChainId(chainId);
+
+                    setConnecting(false);
+                },
+            });
+        },
+        [requestAccount, router],
+    );
+
+    const allowedChainId = (): boolean => {
+        if (!allowedNetworks.includes(chainId as never)) {
+            onError(ErrorType.InvalidNetwork, "Only Ethereum and Polygon networks are supported.");
+            return false
         }
 
-        const address = utils.getAddress(account);
+        return true;
+    };
 
-        router.visit(route("connect"), {
-            replace: true,
-            method: "post" as VisitOptions["method"],
-            data: {
-                address,
-            },
-            onError: (error) => {
-                const firstError = [error.address, error.chainId].find((value) => typeof value === "string");
+    const scanUrl = (): string => {
+        if (chainId === 137) {
+            return "https://polygonscan.com/address/";
+        }
 
-                onError(ErrorType.Generic, firstError);
-            },
-            onFinish: () => {
-                setAccount(account);
-
-                setChainId(chainId);
-
-                setConnecting(false);
-            },
-        });
-    }, [requestAccount, router]);
+        return "https://etherscan.io/address/";
+    }
 
     return {
         account,
         chainId,
+        allowedChainId,
+        scanUrl,
         connectWallet,
         connecting,
         initialized,

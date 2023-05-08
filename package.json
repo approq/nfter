@@ -62,6 +62,7 @@
         "@metamask/providers": "^10.2.1",
         "@testing-library/jest-dom": "^5.16.5",
         "classnames": "^2.3.2",
-        "ethers": "5.7.2"
+        "ethers": "5.7.2",
+        "ipfs-http-client": "^60.0.0"
     }
 }

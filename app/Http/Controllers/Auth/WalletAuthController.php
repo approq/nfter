@@ -10,6 +10,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,7 +18,14 @@ class WalletAuthController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('Auth/WalletConnect');
+        $nonce = Str::random();
+        $message = "Sign this message to confirm you own this wallet address. This action will not cost any gas fees.\n\nNonce: " . $nonce;
+
+        session()->put('sign_message', $message);
+
+        return Inertia::render('Auth/WalletConnect', [
+            'message' => $message,
+        ]);
     }
 
     public function store(StoreWalletAuthRequest $request): RedirectResponse
