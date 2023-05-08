@@ -63,7 +63,7 @@ export default function Guest({ message }: Properties): JSX.Element {
                 )}
 
                 {showError && (
-                    <div className={"rounded-xl bg-red-50 py-3 px-6 sm:max-w-sm"}>
+                    <div className={"rounded-xl bg-red-50 px-6 py-3 sm:max-w-sm"}>
                         <h3 className={"mb-2 inline-flex items-center font-bold text-red-600"}>
                             <img
                                 src="/images/error.svg"

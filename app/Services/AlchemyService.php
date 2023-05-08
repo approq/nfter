@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Http;
 
 class AlchemyService
 {
-    private PendingRequest $request;
+    private PendingRequest $eth;
+    private PendingRequest $polygon;
 
-    public function __construct() {
-        $this->request = Http::baseUrl(env('ALCHEMY_URL') . env('ALCHEMY_API_KEY'));
+    public function __construct()
+    {
+        $this->eth = Http::baseUrl(env('ALCHEMY_ETH_URL') . env('ALCHEMY_ETH_API_KEY'));
+        $this->polygon = Http::baseUrl(env('ALCHEMY_POLYGON_URL') . env('ALCHEMY_POLYGON_API_KEY'));
     }
 
     public function getNFTs(string $address, array $options = ['withMetadata' => 'true']): array
@@ -20,7 +23,7 @@ class AlchemyService
         $urlParams = http_build_query($options);
 
         do {
-            $response = $this->request->get(
+            $response = $this->eth->get(
                 "/getNFTs?owner=$address&$urlParams" . ($pageKey ? "&pageKey=$pageKey" : '')
             )->object();
 
@@ -30,6 +33,24 @@ class AlchemyService
 
 
         return $nfts;
+    }
+
+    public function getBalances(string $address, ): array
+    {
+        $balances = [];
+
+        foreach (['eth' => 'eth', 'polygon' => 'matic'] as $key => $chain) {
+            $balances[$chain] = $this->convertHexToFloat(
+                $this->{$key}->post("", ["params" => [$address, "latest"], "method" => 'eth_getBalance'])->object()->result
+            );
+        }
+
+        return $balances;
+    }
+
+    private function convertHexToFloat(string $hex): float
+    {
+        return hexdec($hex) / pow(10, 18);
     }
 }
 

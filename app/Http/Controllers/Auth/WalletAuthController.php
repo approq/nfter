@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\StoreWalletAuthRequest;
 use App\Jobs\FetchUserNftsJob;
+use App\Models\Currency;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +37,8 @@ class WalletAuthController extends Controller
 
         if(!$user) {
             $user = User::create([
-                'address' => $validatedData['address']
+                'address' => $validatedData['address'],
+                'currency_id' => Currency::DEFAULT,
             ]);
 
             FetchUserNftsJob::dispatch($user);

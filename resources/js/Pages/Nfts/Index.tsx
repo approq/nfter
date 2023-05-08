@@ -4,11 +4,15 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 interface Properties {
     auth: { user: App.Data.UserData };
     nfts: App.Data.NftData[];
+    currencies: App.Data.CurrencyData[];
 }
 
-export default function Index({ nfts, auth: { user } }: Properties): JSX.Element {
+export default function Index({ nfts, auth: { user }, currencies }: Properties): JSX.Element {
     return (
-        <AuthenticatedLayout user={user}>
+        <AuthenticatedLayout
+            user={user}
+            currencies={currencies}
+        >
             {nfts.length > 0 ? (
                 <div
                     className={

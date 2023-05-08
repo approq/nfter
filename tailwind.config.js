@@ -8,7 +8,7 @@ module.exports = {
         "./resources/views/**/*.blade.php",
         "./resources/js/**/*.tsx",
     ],
-
+    darkMode: "class",
     theme: {
         extend: {
             fontFamily: {

@@ -12,6 +12,7 @@ class UserData extends Data
 {
     public function __construct(
         public string $address,
+        public CurrencyData $currency
     ) {
     }
 }
